@@ -14,5 +14,6 @@ in
       nixpkgs.rust-analyzer
       nixpkgs.libiconv
       nixpkgs.llvmPackages.lldb
+      nixpkgs.darwin.apple_sdk.frameworks.Security
     ];
   }
