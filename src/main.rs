@@ -31,14 +31,16 @@ struct Args {
 }
 
 fn main() -> Result<(), ureq::Error> {
-    let args = Args::parse();
-
     let mut stdout = stdout();
+    let Args { description } = Args::parse();
+
+    let prompt = format!("# Bourne shell command. {}.\n$ ", description);
+
     let result: CompletionsResponse = ureq::post(OPENAI_API_URL)
         .set("Content-Type", "application/json")
         .set("Authorization", &format!("Bearer {}", TEST_API_KEY))
         .send_json(ureq::json!({
-            "prompt": args.description,
+            "prompt": prompt,
             "model": OPENAI_MODEL,
             //
             // Sane default temperature for Codex
