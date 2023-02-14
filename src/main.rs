@@ -1,7 +1,13 @@
 use clap::Parser;
 use serde::Deserialize;
+use std::env;
 use std::io::{self, stdout};
 use ureq;
+
+mod error;
+mod result;
+
+use result::Result;
 
 /// OpenAI Model
 ///
@@ -11,9 +17,28 @@ use ureq;
 /// https://platform.openai.com/docs/models/models
 ///
 const OPENAI_MODEL: &str = "code-davinci-002";
+
+/// OpenAI Model Temperature
+///
+/// Sane default used for Codex.
+///
+/// https://platform.openai.com/docs/guides/code/best-practices
+///
+const OPENAI_MODEL_TEMPERATURE = 0.1;
+
+/// OpenAI Completions API URL
+///
+/// https://platform.openai.com/docs/api-reference/completions/create
+///
 const OPENAI_API_URL: &str = "https://api.openai.com/v1/completions";
 
-const TEST_API_KEY: &str = "";
+/// OpenAI API Key -- Environment Variable Key
+///
+/// Reuses name from official examples:
+///
+/// https://platform.openai.com/docs/quickstart/add-your-api-key
+///
+const OPENAI_API_KEY_ENV_KEY: &str = "OPENAI_API_KEY";
 
 #[derive(Deserialize)]
 struct CompletionsResponse {
@@ -30,7 +55,10 @@ struct Args {
     description: String,
 }
 
-fn main() -> Result<(), ureq::Error> {
+fn main() -> Result<()> {
+    let openai_api_key_env = env::var(OPENAI_API_KEY_ENV_KEY)?;
+    let openai_api_key_env = openai_api_key_env.trim();
+
     let mut stdout = stdout();
     let Args { description } = Args::parse();
 
@@ -38,15 +66,10 @@ fn main() -> Result<(), ureq::Error> {
 
     let result: CompletionsResponse = ureq::post(OPENAI_API_URL)
         .set("Content-Type", "application/json")
-        .set("Authorization", &format!("Bearer {}", TEST_API_KEY))
+        .set("Authorization", &format!("Bearer {}", openai_api_key_env))
         .send_json(ureq::json!({
             "prompt": prompt,
-            "model": OPENAI_MODEL,
-            //
-            // Sane default temperature for Codex
-            //
-            // https://platform.openai.com/docs/guides/code/best-practices
-            //
+            "model": OPENAI_MODEL_TEMPERATURE,
             "temperature": 0.1,
         }))?
         .into_json()?;
