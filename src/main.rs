@@ -102,7 +102,18 @@ fn main() -> Result<()> {
     let mut stdout = stdout();
     let Args { description } = Args::parse();
 
-    let prompt = format!("# Bourne shell command. {}.\n$ ", description);
+    let prompt = format!(
+        "# Bourne shell command
+         #
+         # The command does the following: {}.
+         #
+         # The command is one line, has no
+         # comments, and does not use custom
+         # shell scripts.
+         #
+         $ ",
+        description
+    );
 
     let result: CompletionsResponse = ureq::post(OPENAI_API_URL)
         .set("Content-Type", "application/json")
@@ -111,6 +122,8 @@ fn main() -> Result<()> {
             "prompt": prompt,
             "model": OPENAI_MODEL,
             "temperature": OPENAI_MODEL_TEMPERATURE,
+            "max_tokens": 128,
+            "stop": ["\r", "\n"],
         }))?
         .into_json()?;
 
