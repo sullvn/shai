@@ -7,7 +7,7 @@ mod config;
 mod error;
 mod result;
 
-use error::Error;
+use config::{ConfigComplete, ConfigSource, ConfigSourceEnv, ConfigSourceFile};
 use result::Result;
 
 /// OpenAI Completions API URL
@@ -32,9 +32,9 @@ struct Args {
 }
 
 fn main() -> Result<()> {
-    let openai_api_key = openai_api_key_env()
-        .or_else(|_| openai_api_key_file())
-        .or(Err(Error::NoAPIKey))?;
+    let config: ConfigComplete = ConfigSourceFile::read_config()
+        .merge(ConfigSourceEnv::read_config())
+        .try_into()?;
 
     let mut stdout = stdout();
     let Args { description } = Args::parse();
@@ -54,12 +54,15 @@ fn main() -> Result<()> {
 
     let result: CompletionsResponse = ureq::post(OPENAI_API_URL)
         .set("Content-Type", "application/json")
-        .set("Authorization", &format!("Bearer {}", openai_api_key))
+        .set(
+            "Authorization",
+            &format!("Bearer {}", &config.api_key.trim()),
+        )
         .send_json(ureq::json!({
             "prompt": prompt,
-            "model": OPENAI_MODEL,
-            "temperature": OPENAI_MODEL_TEMPERATURE,
-            "max_tokens": 128,
+            "model": config.model,
+            "temperature": config.temperature,
+            "max_tokens": config.max_tokens,
             "stop": ["\r", "\n"],
         }))?
         .into_json()?;

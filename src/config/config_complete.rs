@@ -3,10 +3,10 @@ use super::defaults;
 use crate::error::Error;
 
 pub struct ConfigComplete {
-    api_key: String,
-    max_tokens: u16,
-    model: String,
-    temperature: f32,
+    pub api_key: String,
+    pub max_tokens: u16,
+    pub model: String,
+    pub temperature: f32,
 }
 
 impl TryFrom<ConfigParts> for ConfigComplete {

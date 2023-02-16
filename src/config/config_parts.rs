@@ -8,7 +8,7 @@ pub struct ConfigParts {
 }
 
 impl ConfigParts {
-    fn merge(self, other: Self) -> Self {
+    pub fn merge(self, other: Self) -> Self {
         Self {
             api_key: other.api_key.or(self.api_key),
             max_tokens: other.max_tokens.or(self.max_tokens),
