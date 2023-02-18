@@ -8,6 +8,7 @@ use ureq;
 pub enum Error {
     IOError(io::Error),
     NoAPIKey,
+    NoResults,
     UreqError(ureq::Error),
     VarError(VarError),
 }
@@ -19,6 +20,7 @@ impl Display for Error {
         match self {
             Self::IOError(err) => err.fmt(f),
             Self::NoAPIKey => "No OpenAI API key".fmt(f),
+            Self::NoResults => "No results".fmt(f),
             Self::UreqError(err) => err.fmt(f),
             Self::VarError(err) => err.fmt(f),
         }

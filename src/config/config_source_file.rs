@@ -1,9 +1,11 @@
 use std::env;
-use std::fs;
+use std::fs::{self, File};
+use std::io::{self, Write};
 use std::path::PathBuf;
 
 use super::config_parts::ConfigParts;
 use super::config_source::ConfigSource;
+use crate::error::Error;
 use crate::result::Result;
 
 /// Home config directory
@@ -47,6 +49,26 @@ impl ConfigSourceFile {
         ]
         .iter()
         .collect())
+    }
+
+    pub fn write_config(openai_api_key: &str) -> Result<()> {
+        let path = Self::file_path()?;
+
+        let mut file = match File::create(&path) {
+            Err(err) if err.kind() == io::ErrorKind::NotFound => {
+                let dir = path.parent().ok_or(Error::IOError(io::Error::new(
+                    io::ErrorKind::NotFound,
+                    "Can't find appropriate directory for config",
+                )))?;
+                fs::create_dir_all(dir)?;
+                File::create(path)?
+            }
+            Err(err) => return Err(Error::IOError(err)),
+            Ok(file) => file,
+        };
+        file.write_all(openai_api_key.as_bytes())?;
+
+        Ok(())
     }
 }
 
