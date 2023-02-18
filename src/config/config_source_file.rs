@@ -39,16 +39,21 @@ pub struct ConfigSourceFile {}
 
 impl ConfigSourceFile {
     fn file_path() -> Result<PathBuf> {
-        let home_path = env::var("XDG_CONFIG_HOME").or_else(|_| env::var("HOME"))?;
+        let path = match env::var("XDG_CONFIG_HOME") {
+            Ok(xdg_config_home) => [&xdg_config_home, CONFIG_DIR_NAME, CONFIG_FILE_NAME]
+                .iter()
+                .collect(),
+            Err(_) => [
+                &env::var("HOME")?,
+                HOME_CONFIG_DIR,
+                CONFIG_DIR_NAME,
+                CONFIG_FILE_NAME,
+            ]
+            .iter()
+            .collect(),
+        };
 
-        Ok([
-            &home_path,
-            HOME_CONFIG_DIR,
-            CONFIG_DIR_NAME,
-            CONFIG_FILE_NAME,
-        ]
-        .iter()
-        .collect())
+        Ok(path)
     }
 
     pub fn write_config(openai_api_key: &str) -> Result<()> {
