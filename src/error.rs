@@ -19,7 +19,7 @@ impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::IOError(err) => err.fmt(f),
-            Self::NoAPIKey => "No OpenAI API key".fmt(f),
+            Self::NoAPIKey => "No OpenAI API key. Run `shai help`.".fmt(f),
             Self::NoResults => "No results".fmt(f),
             Self::UreqError(err) => err.fmt(f),
             Self::VarError(err) => err.fmt(f),
