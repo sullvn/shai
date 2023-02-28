@@ -11,6 +11,7 @@ in
       nixpkgs.rustc
       nixpkgs.cargo
       nixpkgs.rustfmt
+      nixpkgs.clippy
       nixpkgs.rust-analyzer
       nixpkgs.libiconv
       nixpkgs.llvmPackages.lldb
