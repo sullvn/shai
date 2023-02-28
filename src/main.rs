@@ -1,14 +1,5 @@
 use clap::Parser;
-
-mod args;
-mod config;
-mod error;
-mod process_result;
-mod result;
-mod subcommands;
-
-use args::Args;
-use process_result::ProcessResult;
+use shai::{subcommands, Args, ProcessResult};
 
 fn main() -> ProcessResult<()> {
     match Args::parse() {

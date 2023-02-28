@@ -15,20 +15,20 @@ use clap::Parser;
 /// Setup can be done by file or environment
 /// variables:
 ///
-///     #
-///     # Configuration from file
-///     #
-///     $ shai configure --openai-api-key ...
-///     $ shai "Path of the largest file on the system"
+/// ```sh
+/// #
+/// # Configuration from file
+/// #
+/// $ shai configure --openai-api-key ...
+/// $ shai "Path of the largest file on the system"
 ///
-///     #
-///     # Configuration from environment variables
-///     #
-///     $ OPENAI_API_KEY=... shai "Path of the largest file on the system"
+/// #
+/// # Configuration from environment variables
+/// #
+/// $ OPENAI_API_KEY=... shai "Path of the largest file on the system"
+/// ```
 ///
-/// Obtain an API key here:
-///
-///     https://platform.openai.com/account/api-keys
+/// Obtain an API key here: https://platform.openai.com/account/api-keys
 ///
 pub enum Args {
     Command(Command),
