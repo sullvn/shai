@@ -61,14 +61,14 @@ impl ConfigSourceFile {
 
         let mut file = match File::create(&path) {
             Err(err) if err.kind() == io::ErrorKind::NotFound => {
-                let dir = path.parent().ok_or(Error::IOError(io::Error::new(
+                let dir = path.parent().ok_or(Error::IO(io::Error::new(
                     io::ErrorKind::NotFound,
                     "Can't find appropriate directory for config",
                 )))?;
                 fs::create_dir_all(dir)?;
                 File::create(path)?
             }
-            Err(err) => return Err(Error::IOError(err)),
+            Err(err) => return Err(Error::IO(err)),
             Ok(file) => file,
         };
         file.write_all(openai_api_key.as_bytes())?;
@@ -79,10 +79,12 @@ impl ConfigSourceFile {
 
 impl ConfigSource for ConfigSourceFile {
     fn read_config() -> ConfigParts {
-        let mut parts = ConfigParts::default();
-        parts.api_key = Self::file_path()
+        let api_key = Self::file_path()
             .and_then(|fp| Ok(fs::read_to_string(fp)?))
             .ok();
-        parts
+        ConfigParts {
+            api_key,
+            ..Default::default()
+        }
     }
 }

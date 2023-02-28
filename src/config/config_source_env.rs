@@ -15,8 +15,9 @@ pub struct ConfigSourceEnv {}
 
 impl ConfigSource for ConfigSourceEnv {
     fn read_config() -> ConfigParts {
-        let mut parts = ConfigParts::default();
-        parts.api_key = env::var(OPENAI_API_KEY_ENV_KEY).ok();
-        parts
+        ConfigParts {
+            api_key: env::var(OPENAI_API_KEY_ENV_KEY).ok(),
+            ..Default::default()
+        }
     }
 }

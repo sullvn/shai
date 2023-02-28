@@ -1,5 +1,6 @@
 use std::default::Default;
 
+#[derive(Default)]
 pub struct ConfigParts {
     pub api_key: Option<String>,
     pub max_tokens: Option<u16>,
@@ -18,13 +19,4 @@ impl ConfigParts {
     }
 }
 
-impl Default for ConfigParts {
-    fn default() -> Self {
-        ConfigParts {
-            api_key: None,
-            max_tokens: None,
-            model: None,
-            temperature: None,
-        }
-    }
-}
+
