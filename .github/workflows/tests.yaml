@@ -1,0 +1,29 @@
+name: Tests
+run-name: Tests
+on: [push, pull_request]
+jobs:
+  lints:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Typecheck
+        run: cargo check
+      - name: Clippy
+        run: cargo clippy
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Tests
+        run: cargo test
