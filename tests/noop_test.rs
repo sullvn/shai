@@ -80,9 +80,9 @@ fn api_key_config_file() -> Result<()> {
     let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
     let home_dir = tempdir()?;
     let not_home_dir = tempdir()?;
+    let xdg_config_dir: PathBuf = [home_dir.path(), HOME_CONFIG_DIR.as_ref()].iter().collect();
     let config_path: PathBuf = [
-        home_dir.path(),
-        HOME_CONFIG_DIR.as_ref(),
+        xdg_config_dir.as_path(),
         CONFIG_DIR_NAME.as_ref(),
         CONFIG_FILE_NAME.as_ref(),
     ]
@@ -114,7 +114,7 @@ fn api_key_config_file() -> Result<()> {
         .args(["command", "path of largest file on system"])
         .env_clear()
         .env("HOME", not_home_dir.path())
-        .env("XDG_CONFIG_HOME", home_dir.path())
+        .env("XDG_CONFIG_HOME", xdg_config_dir)
         .output()?;
 
     assert!(!command_output.stdout.is_empty());
