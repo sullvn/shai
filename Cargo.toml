@@ -12,3 +12,6 @@ ureq = { version = "2.6", features = ["tls", "gzip", "brotli", "native-certs", "
 [profile.release]
 lto = "fat"
 strip = "symbols"
+
+[dev-dependencies]
+tempfile = "3.4.0"
