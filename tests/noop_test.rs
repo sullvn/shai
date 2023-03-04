@@ -106,7 +106,13 @@ fn api_key_config_file() -> Result<()> {
         .env("HOME", home_dir.path())
         .output()?;
 
-    assert!(!command_output.stdout.is_empty());
+    assert!(
+        !command_output.stdout.is_empty(),
+        "stdout='{:?}' stderr='{:?}' status='{:?}'",
+        command_output.stdout,
+        command_output.stderr,
+        command_output.status.code(),
+    );
     assert!(command_output.stderr.is_empty());
     assert!(command_output.status.success());
 
