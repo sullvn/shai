@@ -28,9 +28,6 @@ jobs:
       - name: DNS check (Windows)
         run: nslookup api.openai.com
         if: ${{ runner.os == 'Windows' }}
-      - name: HTTPS check
-        run: wget https://api.openai.com/v1/completions
-        if: ${{ runner.os == 'Windows' }}
       - name: Tests
         run: cargo test
         env:
