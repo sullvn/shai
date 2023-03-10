@@ -1,6 +1,5 @@
 use std::env::{self, current_dir};
 use std::fs::File;
-use std::net::ToSocketAddrs;
 use std::path::PathBuf;
 use std::process::Command;
 use tempfile::tempdir;
@@ -27,11 +26,20 @@ fn shai_command() -> Result<Command> {
 #[test]
 fn find_required_env() -> Result<()> {
     let vars: Vec<(String, String)> = env::vars().collect();
+    let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
+    let home_dir = tempdir()?;
 
     for i in 0..vars.len() {
         env::remove_var(&vars[i].0);
 
-        if !"api.openai.com:443".to_socket_addrs().is_ok() {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        let command_output = shai_command()?
+            .args(["command", "path of largest file on system"])
+            .env("HOME", home_dir.path())
+            .env(OPENAI_API_KEY_ENV_KEY, &api_key)
+            .output()?;
+
+        if command_output.stdout.is_empty() {
             env::set_var(&vars[i].0, &vars[i].1);
         }
     }
