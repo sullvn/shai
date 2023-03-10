@@ -97,14 +97,15 @@ fn api_key_environment_variable() -> Result<()> {
         // .env("LOCALAPPDATA", env::var("LOCALAPPDATA").unwrap())
         // .env("Path", env::var("Path").unwrap())
         // ---
-        // .env("ProgramData", env::var("ProgramData").unwrap())
-        // .env("ProgramFiles", env::var("ProgramFiles").unwrap())
-        // .env("SystemDrive", env::var("SystemDrive").unwrap())
-        // .env("SystemRoot", env::var("SystemRoot").unwrap())
-        .env("TEMP", env::var("TEMP").unwrap())
-        .env("TMP", env::var("TMP").unwrap())
-        .env("USERPROFILE", env::var("USERPROFILE").unwrap())
-        .env("windir", env::var("windir").unwrap())
+        .env("ProgramData", env::var("ProgramData").unwrap())
+        .env("ProgramFiles", env::var("ProgramFiles").unwrap())
+        .env("SystemDrive", env::var("SystemDrive").unwrap())
+        .env("SystemRoot", env::var("SystemRoot").unwrap())
+        // ---
+        // .env("TEMP", env::var("TEMP").unwrap())
+        // .env("TMP", env::var("TMP").unwrap())
+        // .env("USERPROFILE", env::var("USERPROFILE").unwrap())
+        // .env("windir", env::var("windir").unwrap())
         .output()?;
 
     assert!(!command_output.stdout.is_empty());
