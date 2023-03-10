@@ -99,8 +99,9 @@ fn api_key_environment_variable() -> Result<()> {
         // ---
         .env("ProgramData", env::var("ProgramData").unwrap())
         .env("ProgramFiles", env::var("ProgramFiles").unwrap())
-        .env("SystemDrive", env::var("SystemDrive").unwrap())
-        .env("SystemRoot", env::var("SystemRoot").unwrap())
+        // ---
+        // .env("SystemDrive", env::var("SystemDrive").unwrap())
+        // .env("SystemRoot", env::var("SystemRoot").unwrap())
         // ---
         // .env("TEMP", env::var("TEMP").unwrap())
         // .env("TMP", env::var("TMP").unwrap())
