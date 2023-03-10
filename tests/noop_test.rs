@@ -85,17 +85,17 @@ fn api_key_environment_variable() -> Result<()> {
         .env_clear()
         .env("HOME", home_dir.path())
         .env(OPENAI_API_KEY_ENV_KEY, &api_key)
-        .env("ALLUSERSPROFILE", env::var("ALLUSERSPROFILE").unwrap())
-        .env("APPDATA", env::var("APPDATA").unwrap())
-        .env(
-            "CommonProgramFiles",
-            env::var("CommonProgramFiles").unwrap(),
-        )
-        .env("DriverData", env::var("DriverData").unwrap())
-        .env("HOMEDRIVE", env::var("HOMEDRIVE").unwrap())
-        .env("HOMEPATH", env::var("HOMEPATH").unwrap())
-        .env("LOCALAPPDATA", env::var("LOCALAPPDATA").unwrap())
-        .env("Path", env::var("Path").unwrap())
+        // .env("ALLUSERSPROFILE", env::var("ALLUSERSPROFILE").unwrap())
+        // .env("APPDATA", env::var("APPDATA").unwrap())
+        // .env(
+        //     "CommonProgramFiles",
+        //     env::var("CommonProgramFiles").unwrap(),
+        // )
+        // .env("DriverData", env::var("DriverData").unwrap())
+        // .env("HOMEDRIVE", env::var("HOMEDRIVE").unwrap())
+        // .env("HOMEPATH", env::var("HOMEPATH").unwrap())
+        // .env("LOCALAPPDATA", env::var("LOCALAPPDATA").unwrap())
+        // .env("Path", env::var("Path").unwrap())
         .env("ProgramData", env::var("ProgramData").unwrap())
         .env("ProgramFiles", env::var("ProgramFiles").unwrap())
         .env("SystemDrive", env::var("SystemDrive").unwrap())
