@@ -23,34 +23,6 @@ fn shai_command() -> Result<Command> {
     Ok(Command::new(binary_path))
 }
 
-// #[test]
-// fn find_required_env() -> Result<()> {
-//     let vars: Vec<(String, String)> = env::vars().collect();
-//     let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
-//     let home_dir = tempdir()?;
-//
-//     for i in 0..vars.len() {
-//         env::remove_var(&vars[i].0);
-//
-//         std::thread::sleep(std::time::Duration::from_secs(1));
-//         let command_output = shai_command()?
-//             .args(["command", "path of largest file on system"])
-//             .env("HOME", home_dir.path())
-//             .env(OPENAI_API_KEY_ENV_KEY, &api_key)
-//             .output()?;
-//
-//         if command_output.stdout.is_empty() {
-//             env::set_var(&vars[i].0, &vars[i].1);
-//         }
-//     }
-//
-//     let vars: Vec<(String, String)> = env::vars().collect();
-//
-//     assert_eq!(vars, Vec::new());
-//
-//     Ok(())
-// }
-
 // Integration tests:
 //
 // Now:
@@ -83,30 +55,9 @@ fn api_key_environment_variable() -> Result<()> {
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
         .env_clear()
+        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", home_dir.path())
         .env(OPENAI_API_KEY_ENV_KEY, &api_key)
-        // .env("ALLUSERSPROFILE", env::var("ALLUSERSPROFILE").unwrap())
-        // .env("APPDATA", env::var("APPDATA").unwrap())
-        // .env(
-        //     "CommonProgramFiles",
-        //     env::var("CommonProgramFiles").unwrap(),
-        // )
-        // .env("DriverData", env::var("DriverData").unwrap())
-        // .env("HOMEDRIVE", env::var("HOMEDRIVE").unwrap())
-        // .env("HOMEPATH", env::var("HOMEPATH").unwrap())
-        // .env("LOCALAPPDATA", env::var("LOCALAPPDATA").unwrap())
-        // .env("Path", env::var("Path").unwrap())
-        // ---
-        // .env("ProgramData", env::var("ProgramData").unwrap())
-        // .env("ProgramFiles", env::var("ProgramFiles").unwrap())
-        // ---
-        // .env("SystemDrive", env::var("SystemDrive").unwrap())
-        .env("SystemRoot", env::var("SystemRoot").unwrap())
-        // ---
-        // .env("TEMP", env::var("TEMP").unwrap())
-        // .env("TMP", env::var("TMP").unwrap())
-        // .env("USERPROFILE", env::var("USERPROFILE").unwrap())
-        // .env("windir", env::var("windir").unwrap())
         .output()?;
 
     assert!(!command_output.stdout.is_empty());
@@ -153,6 +104,7 @@ fn api_key_config_file() -> Result<()> {
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
         .env_clear()
+        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", home_dir.path())
         .output()?;
 
@@ -169,6 +121,7 @@ fn api_key_config_file() -> Result<()> {
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
         .env_clear()
+        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", not_home_dir.path())
         .env("XDG_CONFIG_HOME", xdg_config_dir)
         .output()?;
