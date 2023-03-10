@@ -27,32 +27,18 @@ fn shai_command() -> Result<Command> {
 #[test]
 fn find_required_env() -> Result<()> {
     let vars: Vec<(String, String)> = env::vars().collect();
-    let is: Vec<usize> = (0..vars.len()).collect();
 
-    let res = is.binary_search_by(|ii| {
-        let i = *ii;
-        for (k, _) in &vars {
-            env::remove_var(k);
-        }
+    for i in 0..vars.len() {
+        env::remove_var(&vars[i].0);
 
-        env::set_var(&vars[i].0, &vars[i].1);
-        if "api.openai.com:443".to_socket_addrs().is_ok() {
-            return std::cmp::Ordering::Equal;
+        if !"api.openai.com:443".to_socket_addrs().is_ok() {
+            env::set_var(&vars[i].0, &vars[i].1);
         }
-
-        for (k, v) in &vars[0..i] {
-            env::set_var(k, v);
-        }
-        if "api.openai.com:443".to_socket_addrs().is_ok() {
-            std::cmp::Ordering::Greater
-        } else {
-            std::cmp::Ordering::Less
-        }
-    });
-
-    if let Ok(i) = res {
-        assert_eq!(vars[i].0, "");
     }
+
+    let vars: Vec<(String, String)> = env::vars().collect();
+
+    assert_eq!(vars, Vec::new());
 
     Ok(())
 }
