@@ -21,7 +21,20 @@ fn shai_command() -> Result<Command> {
     let binary_path: PathBuf = [current_dir()?, "target/debug/shai".into()]
         .iter()
         .collect();
-    Ok(Command::new(binary_path))
+    let mut command = Command::new(binary_path);
+    command.env_clear();
+
+    // `SystemRoot` environment variable is required
+    // for working DNS queries on Windows. No clue why.
+    if cfg!(windows) {
+        command.env(
+            "SystemRoot",
+            env::var_os("SystemRoot")
+                .expect("`SystemRoot` is a standard environment variable on Windows"),
+        );
+    }
+
+    Ok(command)
 }
 
 #[test]
@@ -29,7 +42,6 @@ fn no_api_key() -> Result<()> {
     let home_dir = tempdir()?;
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env_clear()
         .env("HOME", home_dir.path())
         .output()?;
 
@@ -47,8 +59,6 @@ fn api_key_environment_variable() -> Result<()> {
 
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env_clear()
-        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", home_dir.path())
         .env(OPENAI_API_KEY_ENV_KEY, &api_key)
         .output()?;
@@ -76,7 +86,6 @@ fn api_key_config_file() -> Result<()> {
 
     let configure_output = shai_command()?
         .args(["configure", "--openai-api-key", &api_key])
-        .env_clear()
         .env("HOME", home_dir.path())
         .output()?;
 
@@ -87,8 +96,6 @@ fn api_key_config_file() -> Result<()> {
 
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env_clear()
-        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", home_dir.path())
         .output()?;
 
@@ -98,8 +105,6 @@ fn api_key_config_file() -> Result<()> {
 
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env_clear()
-        .env("SystemRoot", env::var("SystemRoot").unwrap())
         .env("HOME", not_home_dir.path())
         .env("XDG_CONFIG_HOME", xdg_config_dir)
         .output()?;
