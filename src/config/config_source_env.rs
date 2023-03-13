@@ -9,7 +9,7 @@ use super::config_source::ConfigSource;
 ///
 /// https://platform.openai.com/docs/quickstart/add-your-api-key
 ///
-const OPENAI_API_KEY_ENV_KEY: &str = "OPENAI_API_KEY";
+pub const OPENAI_API_KEY_ENV_KEY: &str = "OPENAI_API_KEY";
 
 pub struct ConfigSourceEnv {}
 

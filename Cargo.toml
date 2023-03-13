@@ -7,8 +7,11 @@ edition = "2021"
 clap = { version = "4.1", features = ["derive"] }
 is-terminal = "0.4"
 serde = { version = "1.0", features = ["derive"] }
-ureq = { version = "2.6", features = ["tls", "gzip", "brotli", "native-certs", "json"] }
+ureq = { version = "2.6", features = ["tls", "native-certs", "gzip", "brotli", "json"] }
 
 [profile.release]
 lto = "fat"
 strip = "symbols"
+
+[dev-dependencies]
+tempfile = "3.4.0"

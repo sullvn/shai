@@ -21,19 +21,19 @@ use crate::result::Result;
 /// https://neovim.io/doc/user/starting.html#initialization
 ///
 #[cfg(unix)]
-const HOME_CONFIG_DIR: &str = ".config";
+pub const HOME_CONFIG_DIR: &str = ".config";
 #[cfg(windows)]
-const HOME_CONFIG_DIR: &str = "AppData/Local";
+pub const HOME_CONFIG_DIR: &str = "AppData/Local";
 
 /// Configuration directory name
 ///
 /// Example: `shai`
 /// Example in a path: `~/.config/shai`
 ///
-const CONFIG_DIR_NAME: &str = "shai";
+pub const CONFIG_DIR_NAME: &str = "shai";
 
 /// Configuration file name
-const CONFIG_FILE_NAME: &str = "config";
+pub const CONFIG_FILE_NAME: &str = "config";
 
 pub struct ConfigSourceFile {}
 
