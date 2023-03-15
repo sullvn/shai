@@ -14,7 +14,9 @@ use std::path::PathBuf;
 use std::process::Command;
 use tempfile::tempdir;
 
-use shai::{ConfigSourceFile, Result, HOME_CONFIG_DIR, OPENAI_API_KEY_ENV_KEY};
+#[cfg(unix)]
+use shai::HOME_CONFIG_DIR;
+use shai::{ConfigSourceFile, Result, OPENAI_API_KEY_ENV_KEY};
 
 #[cfg(unix)]
 const CONFIG_DIR_ENV_KEY: &str = "XDG_CONFIG_HOME";

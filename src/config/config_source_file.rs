@@ -69,7 +69,7 @@ impl ConfigSourceFile {
     }
 
     #[cfg(windows)]
-    fn file_path() -> Result<PathBuf> {
+    pub fn file_path() -> Result<PathBuf> {
         //!
         //! ### Windows
         //!
