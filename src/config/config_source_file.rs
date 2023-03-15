@@ -38,21 +38,53 @@ pub const CONFIG_FILE_NAME: &str = "config";
 pub struct ConfigSourceFile {}
 
 impl ConfigSourceFile {
-    fn file_path() -> Result<PathBuf> {
-        let path = match env::var("XDG_CONFIG_HOME") {
-            Ok(xdg_config_home) => [&xdg_config_home, CONFIG_DIR_NAME, CONFIG_FILE_NAME]
+    #[cfg(unix)]
+    pub fn file_path() -> Result<PathBuf> {
+        //!
+        //! ### Unix (Linux + macOS)
+        //!
+        //! - Adopt Linux practices on macOS
+        //!   as that seems to be de facto
+        //!   standard
+        //! - Fallback to using $HOME as
+        //!   $XDG_CONFIG_HOME isn't always
+        //!   available
+        //!
+        if let Ok(xdg_config_home) = env::var("XDG_CONFIG_HOME") {
+            let path = [&xdg_config_home, CONFIG_DIR_NAME, CONFIG_FILE_NAME]
                 .iter()
-                .collect(),
-            Err(_) => [
-                &env::var("HOME")?,
-                HOME_CONFIG_DIR,
-                CONFIG_DIR_NAME,
-                CONFIG_FILE_NAME,
-            ]
-            .iter()
-            .collect(),
-        };
+                .collect();
+            return Ok(path);
+        }
 
+        let path = [
+            &env::var("HOME")?,
+            HOME_CONFIG_DIR,
+            CONFIG_DIR_NAME,
+            CONFIG_FILE_NAME,
+        ]
+        .iter()
+        .collect();
+        Ok(path)
+    }
+
+    #[cfg(windows)]
+    fn file_path() -> Result<PathBuf> {
+        //!
+        //! ### Windows
+        //!
+        //! - Prefer %APPDATA% as it is a standard
+        //!   variable, and is made for application
+        //!   configurations
+        //! - Don't prefer %LOCALAPPDATA% as roaming
+        //!   support is probably desirable
+        //! - Don't fallback to anything, such as
+        //!   %LOCALAPPDATA% or %USERPROFILE%. This
+        //!   simplifies behavior.
+        //!
+        let path = [&env::var("APPDATA")?, CONFIG_DIR_NAME, CONFIG_FILE_NAME]
+            .iter()
+            .collect();
         Ok(path)
     }
 
