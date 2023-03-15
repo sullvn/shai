@@ -10,12 +10,19 @@
 //!   - Provide response
 //!
 use std::env::{self, current_dir};
-use std::fs::File;
 use std::path::PathBuf;
 use std::process::Command;
 use tempfile::tempdir;
 
-use shai::{Result, CONFIG_DIR_NAME, CONFIG_FILE_NAME, HOME_CONFIG_DIR, OPENAI_API_KEY_ENV_KEY};
+#[cfg(unix)]
+use shai::HOME_CONFIG_DIR;
+use shai::{ConfigSourceFile, Result, OPENAI_API_KEY_ENV_KEY};
+
+#[cfg(unix)]
+const CONFIG_DIR_ENV_KEY: &str = "XDG_CONFIG_HOME";
+
+#[cfg(windows)]
+const CONFIG_DIR_ENV_KEY: &str = "APPDATA";
 
 fn shai_command() -> Result<Command> {
     let binary_path: PathBuf = [current_dir()?, "target/debug/shai".into()]
@@ -39,10 +46,11 @@ fn shai_command() -> Result<Command> {
 
 #[test]
 fn no_api_key() -> Result<()> {
-    let home_dir = tempdir()?;
+    let config_dir = tempdir()?;
+
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env("HOME", home_dir.path())
+        .env(CONFIG_DIR_ENV_KEY, config_dir.path())
         .output()?;
 
     assert!(command_output.stdout.is_empty());
@@ -55,11 +63,11 @@ fn no_api_key() -> Result<()> {
 #[test]
 fn api_key_environment_variable() -> Result<()> {
     let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
-    let home_dir = tempdir()?;
+    let config_dir = tempdir()?;
 
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env("HOME", home_dir.path())
+        .env(CONFIG_DIR_ENV_KEY, config_dir.path())
         .env(OPENAI_API_KEY_ENV_KEY, &api_key)
         .output()?;
 
@@ -73,40 +81,75 @@ fn api_key_environment_variable() -> Result<()> {
 #[test]
 fn api_key_config_file() -> Result<()> {
     let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
-    let home_dir = tempdir()?;
-    let not_home_dir = tempdir()?;
-    let xdg_config_dir: PathBuf = [home_dir.path(), HOME_CONFIG_DIR.as_ref()].iter().collect();
-    let config_path: PathBuf = [
-        xdg_config_dir.as_path(),
-        CONFIG_DIR_NAME.as_ref(),
-        CONFIG_FILE_NAME.as_ref(),
-    ]
-    .iter()
-    .collect();
+    let config_dir = tempdir()?;
 
     let configure_output = shai_command()?
         .args(["configure", "--openai-api-key", &api_key])
-        .env("HOME", home_dir.path())
+        .env(CONFIG_DIR_ENV_KEY, config_dir.path())
         .output()?;
 
     assert!(configure_output.stdout.is_empty());
     assert!(configure_output.stderr.is_empty());
     assert!(configure_output.status.success());
-    assert!(File::open(config_path).is_ok());
 
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env("HOME", home_dir.path())
+        .env(CONFIG_DIR_ENV_KEY, config_dir.path())
         .output()?;
 
     assert!(!command_output.stdout.is_empty());
     assert!(command_output.stderr.is_empty());
     assert!(command_output.status.success());
 
+    Ok(())
+}
+
+#[test]
+fn can_construct_config_file_path() -> Result<()> {
+    ConfigSourceFile::file_path()?;
+    Ok(())
+}
+
+#[test]
+#[cfg(unix)]
+fn xdg_config_home() -> Result<()> {
+    let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
+    let home_dir = tempdir()?;
+    let xdg_config_home_dir: PathBuf = [home_dir.path(), HOME_CONFIG_DIR.as_ref()].iter().collect();
+
+    shai_command()?
+        .args(["configure", "--openai-api-key", &api_key])
+        .env("HOME", home_dir.path())
+        .output()?;
+
     let command_output = shai_command()?
         .args(["command", "path of largest file on system"])
-        .env("HOME", not_home_dir.path())
-        .env("XDG_CONFIG_HOME", xdg_config_dir)
+        .env("XDG_CONFIG_HOME", xdg_config_home_dir)
+        .output()?;
+
+    assert!(!command_output.stdout.is_empty());
+    assert!(command_output.stderr.is_empty());
+    assert!(command_output.status.success());
+
+    Ok(())
+}
+
+#[test]
+#[cfg(unix)]
+fn xdg_precedence() -> Result<()> {
+    let api_key = env::var(OPENAI_API_KEY_ENV_KEY)?;
+    let bad_home_dir = tempdir()?;
+    let xdg_config_home_dir = tempdir()?;
+
+    shai_command()?
+        .args(["configure", "--openai-api-key", &api_key])
+        .env("XDG_CONFIG_HOME", xdg_config_home_dir.path())
+        .output()?;
+
+    let command_output = shai_command()?
+        .args(["command", "path of largest file on system"])
+        .env("HOME", bad_home_dir.path())
+        .env("XDG_CONFIG_HOME", xdg_config_home_dir.path())
         .output()?;
 
     assert!(!command_output.stdout.is_empty());
