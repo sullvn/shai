@@ -18,8 +18,8 @@ jobs:
           import os
           import re
 
-          ref_type = ${{ github.ref_type }}
-          ref_name = ${{ github.ref_name }}
+          ref_type = '${{ github.ref_type }}'
+          ref_name = '${{ github.ref_name }}'
 
           is_tag = ref_type == 'tag'
           is_version_number = re.match(
