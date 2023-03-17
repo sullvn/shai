@@ -6,9 +6,10 @@ on:
     # branches: main
 jobs:
   is-release:
-    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
     outputs:
       result: ${{ steps.is-release.outputs.result }}
+    runs-on: ubuntu-latest
     steps:
       - name: Is release?
         id: is-release
@@ -31,12 +32,12 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
               f.write('result=' + result)
   build:
+    needs: is-release
+    if: needs.is-release.outputs.result == 'true'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    needs: is-release
-    if: needs.is-release.outputs.result == 'true'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -84,8 +85,8 @@ jobs:
           path: artifacts/*
           if-no-files-found: error
   publish-release:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Download binaries
         uses: actions/download-artifact@v3
