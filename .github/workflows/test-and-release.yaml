@@ -34,6 +34,10 @@ jobs:
       result: ${{ steps.is-release.outputs.result }}
     runs-on: ubuntu-latest
     steps:
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: Is release?
         id: is-release
         shell: python
@@ -74,6 +78,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Get host triple
