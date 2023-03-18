@@ -108,6 +108,7 @@ jobs:
       - name: Build binary
         run: cargo build --release
       - name: Rename binary
+        shell: bash
         run: |
           BINARY_FILENAME="${{
               format(
