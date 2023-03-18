@@ -109,7 +109,7 @@ jobs:
         run: cargo build --release
       - name: Rename binary
         run: |
-          BINARY_FILENAME = "${{
+          BINARY_FILENAME="${{
               format(
                 'shai-{0}-{1}',
                 steps.host-triple.outputs.result,
