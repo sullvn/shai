@@ -12,6 +12,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Typecheck
         run: cargo check
       - name: Clippy
@@ -26,6 +28,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Run tests
         run: cargo test
         env:
@@ -87,6 +91,8 @@ jobs:
           python-version: '3.11'
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Get host triple
         id: host-triple
         shell: python
