@@ -44,6 +44,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   is-release:
     needs: [lint, test]
+    # Avoid as many job runs as possible with `if`
+    # due to billing rounding up to the minute.
+    if: github.event_name == 'push'
     outputs:
       result: ${{ steps.is-release.outputs.result }}
     runs-on: ubuntu-latest
