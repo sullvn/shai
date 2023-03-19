@@ -42,10 +42,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: REMOVE ME 1
-        run: echo "${{ github.ref }}"
-      - name: REMOVE ME 2
-        run: git branch --remotes --contains "${{ github.ref }}"
       - name: Is release?
         id: is-release
         shell: python
@@ -63,17 +59,16 @@ jobs:
               capture_output = True,
               text = True
           ).stdout
-          print(branch)
 
-          is_main_branch = branch == 'origin/main'
+          is_merged = branch == 'origin/main'
           is_tag = ref_type == 'tag'
           is_version_number = re.match(
               r'^v\d+\.\d+\.\d+$',
               ref_name
           )
-          is_version_tag = is_tag and is_version_number
-          result = 'true' if is_version_tag else 'false'
+          is_release = is_merged and is_tag and is_version_number
 
+          result = 'true' if is_release else 'false'
           with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
               f.write('result=' + result)
   build:
