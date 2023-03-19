@@ -1,34 +1,74 @@
-name: Release
-on:
-  workflow_run:
-    workflows: Test
-    types: completed
-    # branches: main
+name: Test and Release
+on: push
+permissions:
+  contents: write
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Typecheck
+        run: cargo check
+      - name: Clippy
+        run: cargo clippy
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run tests
+        run: cargo test
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   is-release:
-    if: github.event.workflow_run.conclusion == 'success'
+    needs: [lint, test]
     outputs:
       result: ${{ steps.is-release.outputs.result }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: Is release?
         id: is-release
         shell: python
         run: |
           import os
           import re
+          import subprocess
 
+          ref = '${{ github.ref }}'
           ref_type = '${{ github.ref_type }}'
           ref_name = '${{ github.ref_name }}'
 
+          branch = subprocess.run(
+              ['git', 'branch', '--remotes', '--contains', ref],
+              capture_output = True,
+              text = True
+          ).stdout
+
+          is_merged = branch == 'origin/main'
           is_tag = ref_type == 'tag'
           is_version_number = re.match(
               r'^v\d+\.\d+\.\d+$',
               ref_name
           )
-          is_version_tag = is_tag and is_version_number
-          result = 'true' if is_version_tag else 'false'
+          is_release = is_merged and is_tag and is_version_number
 
+          result = 'true' if is_release else 'false'
           with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
               f.write('result=' + result)
   build:
@@ -41,6 +81,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Get host triple
@@ -67,8 +111,9 @@ jobs:
       - name: Build binary
         run: cargo build --release
       - name: Rename binary
+        shell: bash
         run: |
-          BINARY_FILENAME = "${{
+          BINARY_FILENAME="${{
               format(
                 'shai-{0}-{1}',
                 steps.host-triple.outputs.result,
@@ -81,7 +126,7 @@ jobs:
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:
-          name: $${{ runner.os }} Build
+          name: ${{ runner.os }} Build
           path: artifacts/*
           if-no-files-found: error
   publish-release:
@@ -95,5 +140,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
+          generate_release_notes: true
           files: artifacts/*/*
     
+
