@@ -46,7 +46,7 @@ jobs:
     needs: [lint, test]
     # Avoid as many job runs as possible with `if`
     # due to billing rounding up to the minute.
-    if: github.event_name == 'push' && github.ref_type == 'tag'
+    # if: github.event_name == 'push' && github.ref_type == 'tag'
     outputs:
       result: ${{ steps.is-release.outputs.result }}
     runs-on: ubuntu-latest
@@ -85,7 +85,11 @@ jobs:
 
           result = 'true' if is_release else 'false'
           with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
-              f.write('result=' + result)
+              f.write('result=' + branch)
+      - name: Debug 1
+        run: git branch --remotes --contains '${{ github.ref }}'
+      - name: Debug 2
+        run: echo '"${{ steps.is-release.outputs.result }}"'
   build:
     needs: is-release
     if: needs.is-release.outputs.result == 'true'
