@@ -73,7 +73,7 @@ jobs:
               ['git', 'branch', '--remotes', '--contains', ref],
               capture_output = True,
               text = True
-          ).stdout
+          ).stdout.strip()
 
           is_merged = branch == 'origin/main'
           is_tag = ref_type == 'tag'
