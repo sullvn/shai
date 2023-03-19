@@ -6,8 +6,8 @@ on:
       - reoponed
       - synchronize
   push:
-    branches:
-      - main
+    branches: main
+    tags: 'v[0-9]+.[0-9]+.[0-9]+'
 permissions:
   contents: write
 jobs:
@@ -46,7 +46,7 @@ jobs:
     needs: [lint, test]
     # Avoid as many job runs as possible with `if`
     # due to billing rounding up to the minute.
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     outputs:
       result: ${{ steps.is-release.outputs.result }}
     runs-on: ubuntu-latest
