@@ -65,7 +65,7 @@ jobs:
           import re
           import subprocess
 
-          ref = '${{ github.ref }}'
+          ref = 'refs/tags/v0.1.0'
           ref_type = '${{ github.ref_type }}'
           ref_name = '${{ github.ref_name }}'
 
@@ -87,7 +87,7 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
               f.write('result=' + branch)
       - name: Debug 1
-        run: git branch --remotes --contains '${{ github.ref }}'
+        run: echo '${{ github.ref }}'
       - name: Debug 2
         run: echo '"${{ steps.is-release.outputs.result }}"'
   build:
