@@ -67,7 +67,7 @@ jobs:
           import re
           import subprocess
 
-          ref = 'refs/tags/v0.1.0'
+          ref = 'v0.1.0'
           ref_type = '${{ github.ref_type }}'
           ref_name = '${{ github.ref_name }}'
 
@@ -92,10 +92,10 @@ jobs:
         run: echo '${{ github.ref }}'
       - name: Debug 2
         run: echo '"${{ steps.is-release.outputs.result }}"'
-      - name: Debug 3
-        run: git branch --remotes --contains refs/tags/v0.1.0
       - name: Debug 4
         run: git tag
+      - name: Debug 3
+        run: git branch --remotes --contains v0.1.0
   build:
     needs: is-release
     if: needs.is-release.outputs.result == 'true'
