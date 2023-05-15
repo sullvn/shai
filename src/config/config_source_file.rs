@@ -30,7 +30,7 @@ pub const HOME_CONFIG_DIR: &str = "AppData/Local";
 /// Example: `shai`
 /// Example in a path: `~/.config/shai`
 ///
-pub const CONFIG_DIR_NAME: &str = "shai";
+pub const CONFIG_DIR_NAME: &str = env!("CARGO_PKG_NAME");
 
 /// Configuration file name
 pub const CONFIG_FILE_NAME: &str = "config";
@@ -82,9 +82,14 @@ impl ConfigSourceFile {
         //!   %LOCALAPPDATA% or %USERPROFILE%. This
         //!   simplifies behavior.
         //!
-        let path = [&env::var("APPDATA")?, CONFIG_DIR_NAME, CONFIG_FILE_NAME]
-            .iter()
-            .collect();
+        let path = [
+            &env::var("APPDATA")?,
+            CONFIG_DIR_NAME,
+            "config",
+            CONFIG_FILE_NAME,
+        ]
+        .iter()
+        .collect();
         Ok(path)
     }
 
