@@ -1,11 +1,12 @@
 /// OpenAI Model
 ///
-/// Defaulted to the latest Codex model,
-/// optimized by OpenAI for code.
+/// Default to the latest, universally
+/// accessible model by OpenAI for code
+/// generation.
 ///
 /// https://platform.openai.com/docs/models/models
 ///
-pub const OPENAI_MODEL: &str = "code-davinci-002";
+pub const OPENAI_MODEL: &str = "gpt-3.5-turbo";
 
 /// Model Temperature
 ///
