@@ -9,9 +9,9 @@ use crate::result::Result;
 
 /// OpenAI Completions API URL
 ///
-/// https://platform.openai.com/docs/api-reference/completions/create
+/// https://platform.openai.com/docs/api-reference/chat/create
 ///
-const OPENAI_API_URL: &str = "https://api.openai.com/v1/completions";
+const OPENAI_API_URL: &str = "https://api.openai.com/v1/chat/completions";
 
 #[derive(Deserialize)]
 struct CompletionsResponse {
@@ -20,7 +20,12 @@ struct CompletionsResponse {
 
 #[derive(Deserialize)]
 struct CompletionsResponseChoice {
-    text: String,
+    message: CompletionsResponseMessage,
+}
+
+#[derive(Deserialize)]
+struct CompletionsResponseMessage {
+    content: String,
 }
 
 pub fn command(args: args::Command) -> Result<()> {
@@ -48,7 +53,12 @@ pub fn command(args: args::Command) -> Result<()> {
             &format!("Bearer {}", &config.api_key.trim()),
         )
         .send_json(ureq::json!({
-            "prompt": prompt,
+            "messages": [
+                {
+                    "content": prompt,
+                    "role": "user",
+                }
+            ],
             "model": config.model,
             "temperature": config.temperature,
             "max_tokens": config.max_tokens,
@@ -56,7 +66,12 @@ pub fn command(args: args::Command) -> Result<()> {
         }))?
         .into_json()?;
 
-    let first_result = &result.choices.first().ok_or(Error::NoResults)?.text;
+    let first_result = &result
+        .choices
+        .first()
+        .ok_or(Error::NoResults)?
+        .message
+        .content;
     io::copy(&mut first_result.as_bytes(), &mut stdout())?;
 
     Ok(())
