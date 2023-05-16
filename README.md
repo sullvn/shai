@@ -48,7 +48,7 @@ heading.
 ### Installation via Pre-built Binaries
 
 Feel free to grab a pre-built binary on the
-[GitHub Releases page][0].
+[GitHub Releases][0] page.
 
 Your platform doesn't have a binary for it?
 Check out 
@@ -98,7 +98,7 @@ probably be better served by one of these:
   state of *shai*. It requires Node.js to
   run. *shai* is a native binary, so has
   no requirements.
-- [**AIChat**][5] is native alternative,
+- [**AIChat**][5] is a native alternative,
   also made in Rust, that has multiple
   modes. Looks great!
 - [**ShellGPT**][6] is also a simple
