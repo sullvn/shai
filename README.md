@@ -27,9 +27,9 @@ remember strange shell incantations.
 
 ```sh
 $ shai command "File path of the largest file within ~/Documents"
-find / -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
+find ~/Documents -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
 
-$ find / -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
+$ find ~/Documents -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
 /Users/me/Documents/Zoom/2030-11-12 12.54.55 My Zoom Meeting/video128341984.mp4
 ```
 
