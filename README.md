@@ -137,9 +137,9 @@ probably be better served by one of these:
 
 ## You May Also Like
 
-- [cowbox][11] – Safely run programs without
+- [**cowbox**][11] – Safely run programs without
   your files getting borked
-- [pvw][13] – Command-line tool which interactively
+- [**pvw**][13] – Command-line tool which interactively
   previews command outputs
 
 
