@@ -9,13 +9,14 @@
   </div>
 </h1>
 
-<!--
 <div align="center">
+  <a href="https://github.com/sullvn/shai/releases">
+    <img src="https://img.shields.io/github/v/tag/sullvn/shai?label=Version&style=for-the-badge" alt="Version" />
+  </a>
   <a href="https://github.com/sullvn/cowbox/actions/workflows/test.yaml?query=branch%3Amain">
     <img src="https://img.shields.io/github/actions/workflow/status/sullvn/shai/test.yaml?branch=main&label=Tests&style=for-the-badge&logo=github" alt="Tests status" />
   </a>
 </div>
--->
 <br />
 <br />
 
@@ -26,9 +27,9 @@ remember strange shell incantations.
 
 ```sh
 $ shai command "File path of the largest file within ~/Documents"
-find / -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
+find ~/Documents -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
 
-$ find / -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
+$ find ~/Documents -type f -printf '%s %p\n' | sort -nr | head -1 | cut -d" " -f2-
 /Users/me/Documents/Zoom/2030-11-12 12.54.55 My Zoom Meeting/video128341984.mp4
 ```
 
