@@ -9,13 +9,14 @@
   </div>
 </h1>
 
-<!--
 <div align="center">
+  <a href="https://github.com/sullvn/shai/releases">
+    <img src="https://img.shields.io/github/v/tag/sullvn/shai?label=Version&style=for-the-badge" alt="Version" />
+  </a>
   <a href="https://github.com/sullvn/cowbox/actions/workflows/test.yaml?query=branch%3Amain">
     <img src="https://img.shields.io/github/actions/workflow/status/sullvn/shai/test.yaml?branch=main&label=Tests&style=for-the-badge&logo=github" alt="Tests status" />
   </a>
 </div>
--->
 <br />
 <br />
 
